@@ -1,0 +1,31 @@
+group 'me.mjaroszewicz'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'me.mjaroszewicz.extractor.YoutubeExtractor'
+
+ext.moduleName = 'me.mjaroszewicz'
+
+sourceCompatibility = 1.9
+
+repositories {
+    mavenCentral()
+}
+
+compileJava{
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        options.compilerArgs = ['--module-path', classpath.asPath,]
+        classpath = files()
+    }
+}
+
+dependencies {
+    compile group: 'org.mozilla', name: 'rhino', version: '1.7R4'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.3'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.3'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
+}
