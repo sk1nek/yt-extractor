@@ -2,12 +2,8 @@ package me.mjaroszewicz.extractor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.incubator.http.HttpClient;
-import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpResponse;
 import org.jsoup.parser.Parser;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,14 +16,13 @@ public class YoutubeExtractor {
 
     private final static String JSON_PLAYER_CONFIG_REGEX = "ytplayer.config\\s*=\\s*(\\{.*?\\});";
 
-
     public Extraction extract(String videoId){
 
         Extraction ret = new Extraction();
 
         try{
             String url = BASE_URL + "/watch?v=" + videoId;
-            String pageContent = downloadPage(url);
+            String pageContent = Util.getContentByUrl(url);
 
             String playerConfigJson = Util.matchGroup(JSON_PLAYER_CONFIG_REGEX, pageContent, 1);
 
@@ -67,7 +62,6 @@ public class YoutubeExtractor {
                         streams.put(streamUrl, itagItem);
                     }
                 }
-
             }
 
             ret.setStreams(streams);
@@ -76,10 +70,6 @@ public class YoutubeExtractor {
         }
 
         return ret;
-    }
-
-    HashMap<String, String> parseStreams(PlayerConfig pc, String playerUrl){
-        return new HashMap<>();
     }
 
     private String formatPlayerUrl(PlayerConfig pc){
@@ -92,21 +82,6 @@ public class YoutubeExtractor {
 
         return url;
     }
-
-    private String downloadPage(String url){
-
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(new URI(url)).GET().build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandler.asString());
-            return response.body();
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-
-        return null;
-    }
-
 
     private Args mapArgs(JsonNode obj){
         JsonNode argsNode = obj.get("args");
@@ -132,8 +107,5 @@ public class YoutubeExtractor {
 
         return ret;
     }
-
-
-
 
 }

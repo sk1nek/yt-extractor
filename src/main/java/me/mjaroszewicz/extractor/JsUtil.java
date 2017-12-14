@@ -4,15 +4,19 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.ScriptableObject;
 
-public class JsUtil {
+/**
+ * Javascript helper class used for signature decryption via use of javascript.
+ * Uses Mozilla Rhino engine.
+ */
+class JsUtil {
 
     static String loadDecryptionCode(String playerCode){
         String decryptionFunctionName = Util.matchGroup("([\"\\'])signature\\1\\s*,\\s*([a-zA-Z0-9$]+)\\(", playerCode, 2);
         String callerFunction = "function decrypt(a){return XJ(a);}";
 
-        String functionPattern = ("("
-                + decryptionFunctionName.replace("$", "\\$")
-                + "=function\\([a-zA-Z0-9_]+\\)\\{.+?\\})");
+        String functionPattern = "("
+                + decryptionFunctionName
+                + "=function\\([a-zA-Z0-9_]+\\)\\{.+?\\})";
 
         String decryptionFunction = "var "+ Util.matchGroup(functionPattern, playerCode, 1) + ";";
         String helperObjectName = Util.matchGroup(";([A-Za-z0-9_\\$]{2})\\...\\(", decryptionFunction, 1);

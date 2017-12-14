@@ -10,11 +10,6 @@ public class Extraction {
 
     public Extraction(){}
 
-    public Extraction(String title, HashMap<String, Itag> streams) {
-        this.title = title;
-        this.streams = streams;
-    }
-
     public String getTitle() {
         return title;
     }

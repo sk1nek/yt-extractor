@@ -40,7 +40,6 @@ class Util {
             t.printStackTrace();
         }
 
-
         return ret;
     }
 
