@@ -2,7 +2,7 @@ package me.mjaroszewicz.extractor;
 
 public class YoutubeExtractionException extends Exception {
 
-    private String message;
+    private final String message;
 
     YoutubeExtractionException(String message){
         this.message = message;

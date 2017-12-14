@@ -40,13 +40,13 @@ public class Itag {
 
     private String resolution;
 
-    Itag(int id, Params format, Params resolution) {
+    private Itag(int id, Params format, Params resolution) {
         this.id = id;
         this.format = format.text;
         this.resolution = resolution.text;
     }
 
-    private static Map<Integer, Itag> map = Map.ofEntries(
+    private static final Map<Integer, Itag> map = Map.ofEntries(
             Map.entry(17, new Itag(17, Params.FORMAT_v3GPP, Params.RESOLUTION_144p)),
             Map.entry(18, new Itag(18, Params.FORMAT_MPEG4, Params.RESOLUTION_360p)),
             Map.entry(34, new Itag(18, Params.FORMAT_MPEG4, Params.RESOLUTION_360p)),

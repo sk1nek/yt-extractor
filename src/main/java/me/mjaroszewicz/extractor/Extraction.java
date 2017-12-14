@@ -30,7 +30,7 @@ public class Extraction {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("Extraction: Title - " + title + ", urls: \n");
 
-        streams.forEach((k,v) -> stringBuilder.append("Format: " + v.getFormat() + " Resolution: " + v.getResolution() + " Url: " + k + "\n"));
+        streams.forEach((k,v) -> stringBuilder.append("Format: ").append(v.getFormat()).append(" Resolution: ").append(v.getResolution()).append(" Url: ").append(k).append("\n"));
         return stringBuilder.toString();
     }
 }
