@@ -43,16 +43,14 @@ class Util {
         return ret;
     }
 
-    static String getContentByUrl(String url){
+    static String getContentByUrl(String url) throws YoutubeExtractionException{
         try{
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder().GET().uri(new URI(url)).build();
             return httpClient.send(request, HttpResponse.BodyHandler.asString()).body();
         }catch(Throwable t){
-            t.printStackTrace();
+            throw new YoutubeExtractionException("Could not fetch content from url: " + t.getMessage());
         }
-
-        return "";
     }
 
 

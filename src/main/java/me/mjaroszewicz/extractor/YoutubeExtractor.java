@@ -12,25 +12,25 @@ import java.util.stream.Collectors;
 
 public class YoutubeExtractor {
 
-    //TODO - Proper error handling
-
     private final static String BASE_URL = "https://www.youtube.com";
 
     //regex pattern of player config, which itself is located in one of the <script> tags
     private final static String JSON_PLAYER_CONFIG_REGEX = "ytplayer.config\\s*=\\s*(\\{.*?\\});";
 
-    public Extraction extract(String videoId){
+    public Extraction extract(String videoId) throws YoutubeExtractionException{
 
+        //to be returned
         Extraction ret = new Extraction();
 
         try{
             String url = BASE_URL + "/watch?v=" + videoId;
             String pageContent = Util.getContentByUrl(url);
 
+            //extract serialized config
             String playerConfigJson = Util.matchGroup(JSON_PLAYER_CONFIG_REGEX, pageContent, 1);
 
             if(playerConfigJson.equals(""))
-                throw new Exception("Could not fetch config");
+                throw new YoutubeExtractionException("Could not fetch config");
 
             //deserializing player config
             ObjectMapper objectMapper = new ObjectMapper();
@@ -74,7 +74,7 @@ public class YoutubeExtractor {
             //Passing URL collection to returned object
             ret.setStreams(streams);
         }catch(Throwable t){
-            t.printStackTrace();
+            throw new YoutubeExtractionException(t.getMessage());
         }
 
         return ret;

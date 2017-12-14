@@ -8,13 +8,13 @@ public class Extraction {
 
     private HashMap<String, Itag> streams;
 
-    public Extraction(){}
+    Extraction(){}
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    void setTitle(String title) {
         this.title = title;
     }
 
@@ -22,7 +22,15 @@ public class Extraction {
         return streams;
     }
 
-    public void setStreams(HashMap<String, Itag> streams) {
+    void setStreams(HashMap<String, Itag> streams) {
         this.streams = streams;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("Extraction: Title - " + title + ", urls: \n");
+
+        streams.forEach((k,v) -> stringBuilder.append("Format: " + v.getFormat() + " Resolution: " + v.getResolution() + " Url: " + k + "\n"));
+        return stringBuilder.toString();
     }
 }

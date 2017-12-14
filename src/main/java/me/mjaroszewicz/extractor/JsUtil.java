@@ -28,10 +28,10 @@ class JsUtil {
         return helperObject + decryptionFunction + callerFunction;
     }
 
-    static String decryptSignature(String encrypted, String code){
+    static String decryptSignature(String encrypted, String code) throws YoutubeExtractionException{
         Context context = Context.enter();
         context.setOptimizationLevel(-1);
-        String result = "";
+        String result;
 
         try{
             ScriptableObject scope = context.initStandardObjects();
@@ -39,7 +39,7 @@ class JsUtil {
             Function decryptionFunction = (Function) scope.get("decrypt", scope);
             result = (String) decryptionFunction.call(context, scope, scope, new String[]{encrypted});
         }catch(Throwable t){
-            t.printStackTrace();
+            throw new YoutubeExtractionException(t.getMessage());
         }finally {
             Context.exit();
         }
