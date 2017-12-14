@@ -21,7 +21,10 @@ public class YoutubeExtractor {
     private final static String JSON_PLAYER_CONFIG_REGEX = "ytplayer.config\\s*=\\s*(\\{.*?\\});";
 
 
-    public String extract(String videoId){
+    public Extraction extract(String videoId){
+
+        Extraction ret = new Extraction();
+
         try{
             String url = BASE_URL + "/watch?v=" + videoId;
             String pageContent = downloadPage(url);
@@ -35,12 +38,16 @@ public class YoutubeExtractor {
             JsonNode obj = mapper.readTree(playerConfigJson);
             PlayerConfig pc = mapPlayerConfig(obj);
 
-
             String playerUrl = formatPlayerUrl(pc);
+
+            String title = pc.getPlayerArgs().getTitle();
+            ret.setTitle(title);
 
             String encodedUrlMap = pc.getPlayerArgs().getUrlEncodedFmtStreamMap();
 
             ArrayList<String> streamUrlData = new ArrayList<>(Arrays.stream(encodedUrlMap.split(",")).filter(p -> !p.isEmpty()).collect(Collectors.toList()));
+
+            HashMap<String, Itag> streams = new HashMap<>();
 
             for(String s: streamUrlData){
                 HashMap<String, String> tags = Util.compatParseMap(Parser.unescapeEntities(s, true));
@@ -57,16 +64,18 @@ public class YoutubeExtractor {
 
                     }
                     if(streamUrl != null){
-                        return streamUrl;
+                        streams.put(streamUrl, itagItem);
                     }
                 }
 
             }
+
+            ret.setStreams(streams);
         }catch(Throwable t){
             t.printStackTrace();
         }
 
-        return "";
+        return ret;
     }
 
     HashMap<String, String> parseStreams(PlayerConfig pc, String playerUrl){

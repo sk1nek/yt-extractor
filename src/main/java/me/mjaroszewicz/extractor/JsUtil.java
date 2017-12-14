@@ -25,7 +25,6 @@ public class JsUtil {
     }
 
     static String decryptSignature(String encrypted, String code){
-        System.out.println("Code " + code);
         Context context = Context.enter();
         context.setOptimizationLevel(-1);
         String result = "";

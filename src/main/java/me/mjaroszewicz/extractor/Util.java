@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class Util {
+class Util {
 
     static String matchGroup(String pattern, String input, int group){
         Pattern pat = Pattern.compile(pattern);
@@ -44,7 +44,7 @@ public class Util {
         return ret;
     }
 
-    public static String getContentByUrl(String url){
+    static String getContentByUrl(String url){
         try{
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder().GET().uri(new URI(url)).build();
