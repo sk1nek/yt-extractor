@@ -35,7 +35,6 @@ public class YoutubeExtractor {
             JsonNode obj = mapper.readTree(playerConfigJson);
             PlayerConfig pc = mapPlayerConfig(obj);
 
-            System.out.println(pc.getAssets());
 
             String playerUrl = formatPlayerUrl(pc);
 
@@ -45,7 +44,6 @@ public class YoutubeExtractor {
 
             for(String s: streamUrlData){
                 HashMap<String, String> tags = Util.compatParseMap(Parser.unescapeEntities(s, true));
-                tags.forEach((k,v) -> System.out.println("PARSER" + k + " " + v));
 
                 Integer itag = Integer.parseInt(tags.get("itag"));
 
@@ -56,11 +54,10 @@ public class YoutubeExtractor {
                     if(signature!= null){
                         String playerCode = Util.getContentByUrl(playerUrl).replace("\n", "");
                         streamUrl = streamUrl + "&signature=" + JsUtil.decryptSignature(signature, JsUtil.loadDecryptionCode(playerCode));
-                        System.out.println("SIG: " + JsUtil.decryptSignature(signature, JsUtil.loadDecryptionCode(playerCode)));
 
                     }
                     if(streamUrl != null){
-                        System.out.println("url: " + streamUrl);
+                        return streamUrl;
                     }
                 }
 

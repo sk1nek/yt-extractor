@@ -14,7 +14,6 @@ public class Itag {
         FORMAT_v3GPP("v3GPP"),
         FORMAT_MPEG4("MPEG4"),
         FORMAT_WEBM("WEBM"),
-
         RESOLUTION_144p("144p"),
         RESOLUTION_240p("240p"),
         RESOLUTION_360p("360p"),
