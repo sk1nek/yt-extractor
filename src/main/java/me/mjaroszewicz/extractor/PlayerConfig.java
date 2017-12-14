@@ -1,8 +1,5 @@
 package me.mjaroszewicz.extractor;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PlayerConfig {
 
     private Args args;

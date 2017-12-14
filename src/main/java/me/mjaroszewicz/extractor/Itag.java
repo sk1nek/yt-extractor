@@ -4,12 +4,6 @@ import java.util.Map;
 
 public class Itag {
 
-    Itag(int id, Params format, Params resolution) {
-        this.id = id;
-        this.format = format.text;
-        this.resolution = resolution.text;
-    }
-
     enum Params {
         FORMAT_v3GPP("v3GPP"),
         FORMAT_MPEG4("MPEG4"),
@@ -40,11 +34,18 @@ public class Itag {
 
     }
 
+
     private int id;
 
     private String format;
 
     private String resolution;
+
+    Itag(int id, Params format, Params resolution) {
+        this.id = id;
+        this.format = format.text;
+        this.resolution = resolution.text;
+    }
 
     private static Map<Integer, Itag> map = Map.ofEntries(
             Map.entry(17, new Itag(17, Params.FORMAT_v3GPP, Params.RESOLUTION_144p)),

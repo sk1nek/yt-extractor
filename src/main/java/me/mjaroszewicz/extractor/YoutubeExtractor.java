@@ -12,8 +12,11 @@ import java.util.stream.Collectors;
 
 public class YoutubeExtractor {
 
+    //TODO - Proper error handling
+
     private final static String BASE_URL = "https://www.youtube.com";
 
+    //regex pattern of player config, which itself is located in one of the <script> tags
     private final static String JSON_PLAYER_CONFIG_REGEX = "ytplayer.config\\s*=\\s*(\\{.*?\\});";
 
     public Extraction extract(String videoId){
@@ -29,22 +32,23 @@ public class YoutubeExtractor {
             if(playerConfigJson.equals(""))
                 throw new Exception("Could not fetch config");
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode obj = mapper.readTree(playerConfigJson);
-            PlayerConfig pc = mapPlayerConfig(obj);
+            //deserializing player config
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode configNode = objectMapper.readTree(playerConfigJson);
+            PlayerConfig playerConfig = mapPlayerConfig(configNode);
 
-            String playerUrl = formatPlayerUrl(pc);
+            String playerUrl = formatPlayerUrl(playerConfig);
 
-            String title = pc.getPlayerArgs().getTitle();
-            ret.setTitle(title);
+            //Passing title to returned object
+            ret.setTitle(playerConfig.getPlayerArgs().getTitle());
 
-            String encodedUrlMap = pc.getPlayerArgs().getUrlEncodedFmtStreamMap();
+            String encodedUrlMap = playerConfig.getPlayerArgs().getUrlEncodedFmtStreamMap();
 
-            ArrayList<String> streamUrlData = new ArrayList<>(Arrays.stream(encodedUrlMap.split(",")).filter(p -> !p.isEmpty()).collect(Collectors.toList()));
+            ArrayList<String> streamUrlDataArray = new ArrayList<>(Arrays.stream(encodedUrlMap.split(",")).filter(p -> !p.isEmpty()).collect(Collectors.toList()));
 
             HashMap<String, Itag> streams = new HashMap<>();
 
-            for(String s: streamUrlData){
+            for(String s: streamUrlDataArray){
                 HashMap<String, String> tags = Util.compatParseMap(Parser.unescapeEntities(s, true));
 
                 Integer itag = Integer.parseInt(tags.get("itag"));
@@ -53,17 +57,21 @@ public class YoutubeExtractor {
                     Itag itagItem = Itag.getItag(itag);
                     String streamUrl = tags.get("url");
                     String signature = tags.get("s");
+
+                    //decrypt signature
                     if(signature!= null){
                         String playerCode = Util.getContentByUrl(playerUrl).replace("\n", "");
                         streamUrl = streamUrl + "&signature=" + JsUtil.decryptSignature(signature, JsUtil.loadDecryptionCode(playerCode));
-
                     }
+
+                    //collect stream url
                     if(streamUrl != null){
                         streams.put(streamUrl, itagItem);
                     }
                 }
             }
 
+            //Passing URL collection to returned object
             ret.setStreams(streams);
         }catch(Throwable t){
             t.printStackTrace();
