@@ -49,7 +49,7 @@ public class YoutubeExtractor {
             HashMap<String, Itag> streams = new HashMap<>();
 
             for(String s: streamUrlDataArray){
-                HashMap<String, String> tags = Util.compatParseMap(Parser.unescapeEntities(s, true));
+                HashMap<String, String> tags = Util.parseCompatTypeMap(Parser.unescapeEntities(s, true));
 
                 Integer itag = Integer.parseInt(tags.get("itag"));
 
@@ -74,6 +74,7 @@ public class YoutubeExtractor {
             //Passing URL collection to returned object
             ret.setStreams(streams);
         }catch(Throwable t){
+            t.printStackTrace();
             throw new YoutubeExtractionException(t.getMessage());
         }
 

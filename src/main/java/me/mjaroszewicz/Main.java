@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         YoutubeExtractor extractor = new YoutubeExtractor();
         try{
-            Extraction extraction = extractor.extract("659pppwniXA&list=RD659pppwniXA");
+            Extraction extraction = extractor.extract("wycjnCCgUes");
             System.out.println(extraction);
 
         }catch(YoutubeExtractionException ytex){

@@ -13,8 +13,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Utility static methods.
+ */
 class Util {
 
+    /**
+     *
+     * @param pattern Regex pattern
+     * @param input String to be processed
+     * @param group Input subsequence number. For details, look at this -> {@link Matcher#group()}
+     * @return Match if it was found, null otherwise
+     */
     static String matchGroup(String pattern, String input, int group){
         Pattern pat = Pattern.compile(pattern);
         Matcher mat = pat.matcher(input);
@@ -25,7 +35,11 @@ class Util {
             return null;
     }
 
-    static HashMap<String, String> compatParseMap(String input){
+    /**
+     * @param input - Param string
+     * @return Map of 'Compatibility tags' including itag id, quality, video encoding and url
+     */
+    static HashMap<String, String> parseCompatTypeMap(String input) throws YoutubeExtractionException{
         HashMap<String, String> ret = new HashMap<>();
 
         try{
@@ -38,11 +52,17 @@ class Util {
             }
         }catch(Throwable t){
             t.printStackTrace();
+            throw new YoutubeExtractionException(t.getMessage());
         }
 
         return ret;
     }
 
+    /**
+     *
+     * @param url URL
+     * @return String representation of html body
+     */
     static String getContentByUrl(String url) throws YoutubeExtractionException{
         try{
             HttpClient httpClient = HttpClient.newHttpClient();

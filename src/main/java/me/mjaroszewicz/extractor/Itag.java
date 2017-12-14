@@ -31,7 +31,6 @@ public class Itag {
         public String toString(){
             return text;
         }
-
     }
 
     private int id;
