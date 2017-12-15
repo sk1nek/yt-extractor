@@ -7,6 +7,7 @@ import org.jsoup.parser.Parser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Timer;
 import java.util.stream.Collectors;
 
 
@@ -44,32 +45,38 @@ public class YoutubeExtractor {
 
             String encodedUrlMap = playerConfig.getPlayerArgs().getUrlEncodedFmtStreamMap();
 
+            //stream url data to be parsed
             ArrayList<String> streamUrlDataArray = new ArrayList<>(Arrays.stream(encodedUrlMap.split(",")).filter(p -> !p.isEmpty()).collect(Collectors.toList()));
 
+            //stream collections
             HashMap<String, Itag> streams = new HashMap<>();
 
-            for(String s: streamUrlDataArray){
-                HashMap<String, String> tags = Util.parseCompatTypeMap(Parser.unescapeEntities(s, true));
+            streamUrlDataArray.parallelStream().forEach(p->{
+                try{
+                    HashMap<String, String> tags = Util.parseCompatTypeMap(Parser.unescapeEntities(p, true));
 
-                Integer itag = Integer.parseInt(tags.get("itag"));
+                    Integer itag = Integer.parseInt(tags.get("itag"));
 
-                if(Itag.isSupported(itag)){
-                    Itag itagItem = Itag.getItag(itag);
-                    String streamUrl = tags.get("url");
-                    String signature = tags.get("s");
+                    if(Itag.isSupported(itag)){
+                        Itag itagItem = Itag.getItag(itag);
+                        String streamUrl = tags.get("url");
+                        String signature = tags.get("s");
 
-                    //decrypt signature
-                    if(signature!= null){
-                        String playerCode = Util.getContentByUrl(playerUrl).replace("\n", "");
-                        streamUrl = streamUrl + "&signature=" + JsUtil.decryptSignature(signature, JsUtil.loadDecryptionCode(playerCode));
+                        //decrypt signature
+                        if(signature!= null){
+                            String playerCode = Util.getContentByUrl(playerUrl).replace("\n", "");
+                            streamUrl = streamUrl + "&signature=" + JsUtil.decryptSignature(signature, JsUtil.loadDecryptionCode(playerCode));
+                        }
+
+                        //collect stream url
+                        if(streamUrl != null){
+                            streams.put(streamUrl, itagItem);
+                        }
                     }
-
-                    //collect stream url
-                    if(streamUrl != null){
-                        streams.put(streamUrl, itagItem);
-                    }
+                }catch(Throwable t){
+                    t.printStackTrace();
                 }
-            }
+            });
 
             //Passing URL collection to returned object
             ret.setStreams(streams);
